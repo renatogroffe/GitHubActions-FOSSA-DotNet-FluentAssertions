@@ -1,0 +1,33 @@
+name: dotnet8-fluentassertions-fossa
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Instalar o FOSSA CLI
+      run: |
+        curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install-latest.sh | bash
+    - name: Testar a instalacao do FOSSA CLI
+      run: |
+        fossa --help
+    - name: Executar a analise com o FOSSA CLI do projeto Groffe.Distancias.Testes
+      run: |
+        cd ./src/Groffe.Distancias.Testes
+        fossa analyze
+      env:
+        FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
+
